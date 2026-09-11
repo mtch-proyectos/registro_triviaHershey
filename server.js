@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Reemplaza con la URL del Webhook Trigger de tu n8n
-const N8N_WEBHOOK_URL = 'https://automatizaciones-n8n-n8n.dy6ey0.easypanel.host/webhook/hershey';
+const N8N_WEBHOOK_URL = 'https://automatizaciones-n8n-n8n.dy6ey0.easypanel.host/webhook-test/hershey';
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
