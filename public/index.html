@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro Hershey's Trivia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background-color: #120704; color: #F5EBE6; font-family: system-ui, -apple-system, sans-serif; }
+    .card-bg { background-color: #1F0D08; border: 1px solid #D4AF37; }
+    .btn-gold { background: linear-gradient(135deg, #FFD166 0%, #D4AF37 100%); color: #120704; }
+    .btn-gold:hover { background: linear-gradient(135deg, #FFE08B 0%, #E5C158 100%); }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+  <div class="w-full max-w-md card-bg rounded-2xl shadow-2xl p-6 text-center">
+    
+    <!-- PANTALLA 1: FORMULARIO DE REGISTRO -->
+    <div id="sectionForm">
+      <h1 class="text-2xl font-bold text-[#FFD166] uppercase tracking-wide">🍫 ¡VALIDA TU PREMIO!</h1>
+      <p class="text-sm text-gray-300 mt-1 mb-5">Ingresa tus datos para completar tu participación en la Trivia Hershey's.</p>
+
+      <form id="leadForm" class="space-y-4 text-left">
+        <div>
+          <label class="block text-xs font-semibold uppercase text-[#FFD166] mb-1">Nombre Completo</label>
+          <input type="text" id="nombre" required placeholder="Tu Nombre" 
+            class="w-full px-4 py-3 rounded-lg bg-[#2A120A] text-white border border-[#4A2318] focus:outline-none focus:border-[#FFD166]">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase text-[#FFD166] mb-1">Correo Electrónico</label>
+          <input type="email" id="email" required placeholder="tu@email.com" 
+            class="w-full px-4 py-3 rounded-lg bg-[#2A120A] text-white border border-[#4A2318] focus:outline-none focus:border-[#FFD166]">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase text-[#FFD166] mb-1">Teléfono (WhatsApp)</label>
+          <input type="tel" id="telefono" required placeholder="04121234567" 
+            class="w-full px-4 py-3 rounded-lg bg-[#2A120A] text-white border border-[#4A2318] focus:outline-none focus:border-[#FFD166]">
+        </div>
+
+        <button type="submit" id="btnSubmit" 
+          class="w-full py-3 mt-4 btn-gold font-bold text-lg rounded-xl shadow-lg active:scale-95 transition-all">
+          GUARDAR Y FINALIZAR 🏆
+        </button>
+      </form>
+    </div>
+
+    <!-- PANTALLA 2: CONFIRMACIÓN / ÉXITO -->
+    <div id="sectionSuccess" class="hidden py-8">
+      <div class="text-5xl mb-4">🎉</div>
+      <h2 class="text-2xl font-bold text-[#FFD166] uppercase">¡REGISTRO EXITOSO!</h2>
+      <p class="text-gray-200 mt-3 text-base">
+        Tus datos han sido registrados correctamente.<br><br>
+        <span class="text-[#FFD166] font-semibold text-lg">¡Gracias por participar en la experiencia Hershey's! 🍫</span>
+      </p>
+    </div>
+
+  </div>
+
+  <script>
+    const form = document.getElementById('leadForm');
+    const sectionForm = document.getElementById('sectionForm');
+    const sectionSuccess = document.getElementById('sectionSuccess');
+    const btnSubmit = document.getElementById('btnSubmit');
+
+    // 1. Extraer el score de la URL (Acepta ?score=X o ?puntos=X)
+    const urlParams = new URLSearchParams(window.location.search);
+    const scoreVal = urlParams.get('score') || urlParams.get('puntos') || '0';
+    const scoreNum = parseInt(scoreVal, 10);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      btnSubmit.disabled = true;
+      btnSubmit.innerText = "Procesando...";
+
+      // 2. Incluir el score dentro del payload enviado al servidor
+      const payload = {
+        nombre: document.getElementById('nombre').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        telefono: document.getElementById('telefono').value.trim(),
+        score: scoreNum,
+        fecha: new Date().toISOString()
+      };
+
+      try {
+        await fetch('/api/registro', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.error("Error al enviar registro:", err);
+      } finally {
+        sectionForm.classList.add('hidden');
+        sectionSuccess.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
